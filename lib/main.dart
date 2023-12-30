@@ -932,7 +932,7 @@ class AboutPage extends StatelessWidget {
               ),
           ),
               Center(
-                  child: Image.asset('assets/logo.png', width: 200, height: 200,)
+                  child: Card(child: Image.asset('assets/logo.png', width: 200, height: 200,))
               ),
             ],
     );
