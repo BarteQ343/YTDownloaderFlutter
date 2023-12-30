@@ -36,7 +36,7 @@ enum ColorLabel {
 }
 
 Future<void> executeFFmpeg(input, output) async {
-  var result = await Process.run('bin/ffmpeg.exe', ['-i', '$input', '-q:a', '0', '-map', 'a', '-c:a', 'libmp3lame', '$output']);
+  var result = await Process.run('data/flutter_assets/bin/ffmpeg.exe', ['-i', '$input', '-q:a', '0', '-map', 'a', '-c:a', 'libmp3lame', '$output']);
   if (result.exitCode == 0) {
     isDone = true;
   }
