@@ -34,6 +34,45 @@ enum ColorLabel {
   final String label;
   final Color color;
 }
+Future<File> writeTheme(String value) async {
+  File file = File('data/flutter_assets/assets/theme');
+  if (file.existsSync()) {
+    debugPrint(value);
+    return file.writeAsString(value);
+  } else {
+    await file.create(recursive: true);
+    debugPrint(value);
+    debugPrint("Created theme");
+    return file.writeAsString(value);
+  }
+}
+Future<String> readTheme() async {
+  File file = File('data/flutter_assets/assets/theme');
+  if (file.existsSync()) {
+    return file.readAsString();
+  } else {
+    await file.create(recursive: true);
+    debugPrint("Created theme");
+    file.writeAsString('System');
+    return file.readAsString();
+  }
+}
+
+Future<void> setTheme(String value) async {
+  switch (value) {
+    case 'Light':
+      darkMode = false;
+      systemMode = false;
+      break;
+    case 'Dark':
+      darkMode = true;
+      systemMode = false;
+      break;
+    case 'System':
+      systemMode = true;
+      break;
+  }
+}
 
 Future<void> executeFFmpeg(input, output) async {
   var result = await Process.run('data/flutter_assets/bin/ffmpeg.exe', ['-i', '$input', '-q:a', '0', '-map', 'a', '-c:a', 'libmp3lame', '$output']);
@@ -42,7 +81,11 @@ Future<void> executeFFmpeg(input, output) async {
   }
 }
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  String savedTheme = await readTheme();
+  await setTheme(savedTheme);
+
   runApp(const MyApp());
 }
 
@@ -104,23 +147,7 @@ class MyAppState extends ChangeNotifier {
   bool isTextFieldFocused = false;
   var fileIndex = [];
 
-  void setTheme(String value) {
-    switch (value) {
-      case 'Light':
-        darkMode = false;
-        systemMode = false;
-        break;
-      case 'Dark':
-        darkMode = true;
-        systemMode = false;
-        break;
-      case 'System':
-        systemMode = true;
-        break;
-    }
-    notifyListeners();
-  }
-  String selectedOption = 'System';
+  String selectedOption = readTheme().toString();
 
   themeSelector(context) {
     showDialog(
@@ -139,6 +166,7 @@ class MyAppState extends ChangeNotifier {
                       groupValue: selectedOption,
                       onChanged: (value) {
                           selectedOption = value.toString();
+                          writeTheme(selectedOption);
                           setTheme(selectedOption);
                           notifyListeners();
                       },
@@ -149,6 +177,7 @@ class MyAppState extends ChangeNotifier {
                       groupValue: selectedOption,
                       onChanged: (value) {
                         selectedOption = value.toString();
+                        writeTheme(selectedOption);
                         setTheme(selectedOption);
                         notifyListeners();
                       },
@@ -159,6 +188,7 @@ class MyAppState extends ChangeNotifier {
                       groupValue: selectedOption,
                       onChanged: (value) {
                         selectedOption = value.toString();
+                        writeTheme(selectedOption);
                         setTheme(selectedOption);
                         notifyListeners();
                       },
@@ -809,11 +839,6 @@ class RecentsPage extends StatelessWidget {
           var cover = appState.recentsListCover;
           var year = appState.recentsListYear;
           var fileIndex = appState.fileIndex;
-          debugPrint(fileIndex.length.toString());
-          for (String number in fileIndex) {
-            print('Value: $number');
-          }
-
           return fileIndex.isEmpty
            ? ListView.builder(
             itemCount: 1,

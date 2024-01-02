@@ -39,6 +39,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  msix: ^3.7.0
+
 
 flutter:
   uses-material-design: true
@@ -75,3 +77,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+msix_config:
+  display_name: YT Downloader
+  publisher_display_name: BarteQ
+  identity_name: com.barteq.ytdownloader
+  msix_version: 1.0.1.0
+  certificate_password: ''
