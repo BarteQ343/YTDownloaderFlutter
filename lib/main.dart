@@ -36,6 +36,10 @@ enum ColorLabel {
 }
 Future<File> writeTheme(String value) async {
   File file = File('data/flutter_assets/assets/theme');
+  if (Platform.environment.containsKey('ANDROID_DATA')) {
+    final appDocDir = getApplicationDocumentsDirectory();
+    file = File('$appDocDir/data/flutter_assets/assets/theme');
+  }
   if (file.existsSync()) {
     debugPrint(value);
     return file.writeAsString(value);
@@ -48,6 +52,10 @@ Future<File> writeTheme(String value) async {
 }
 Future<String> readTheme() async {
   File file = File('data/flutter_assets/assets/theme');
+  if (Platform.environment.containsKey('ANDROID_DATA')) {
+    final appDocDir = getApplicationDocumentsDirectory();
+    file = File('$appDocDir/data/flutter_assets/assets/theme');
+  }
   if (file.existsSync()) {
     return file.readAsString();
   } else {
