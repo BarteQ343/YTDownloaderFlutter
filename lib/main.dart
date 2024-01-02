@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:media_scanner/media_scanner.dart';
 import 'package:image/image.dart' as img;
+import 'package:path/path.dart';
 
 const platform = MethodChannel('media_scan_channel');
 List<String> titles = <String>[
@@ -34,11 +35,13 @@ enum ColorLabel {
   final String label;
   final Color color;
 }
+
 Future<File> writeTheme(String value) async {
   File file = File('data/flutter_assets/assets/theme');
   if (Platform.environment.containsKey('ANDROID_DATA')) {
-    final appDocDir = getApplicationDocumentsDirectory();
-    file = File('$appDocDir/data/flutter_assets/assets/theme');
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String filePath = join(appDocDir.path, 'data/flutter_assets/assets/theme');
+    file = File(filePath);
   }
   if (file.existsSync()) {
     debugPrint(value);
@@ -50,11 +53,13 @@ Future<File> writeTheme(String value) async {
     return file.writeAsString(value);
   }
 }
+
 Future<String> readTheme() async {
   File file = File('data/flutter_assets/assets/theme');
   if (Platform.environment.containsKey('ANDROID_DATA')) {
-    final appDocDir = getApplicationDocumentsDirectory();
-    file = File('$appDocDir/data/flutter_assets/assets/theme');
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String filePath = join(appDocDir.path, 'data/flutter_assets/assets/theme');
+    file = File(filePath);
   }
   if (file.existsSync()) {
     return file.readAsString();
