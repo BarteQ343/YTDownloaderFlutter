@@ -412,10 +412,12 @@ class MyAppState extends ChangeNotifier {
 
       if (Platform.environment['OS'] == 'Windows_NT') {
         final appDocDir = await getApplicationDocumentsDirectory();
-        try {
-          var defaultMusicDir = Directory('${Platform.environment['HOME']!}\\Music');
-          final savePathTemp = '$defaultMusicDir\\$title.temp.mp3';
-          final savePath = '$defaultMusicDir\\$title.mp3';
+        if (Directory("C:${Platform.environment['HOMEPATH']!}\\Music").existsSync()) {
+          var defaultMusicDir = Directory("C:${Platform.environment['HOMEPATH']!}\\Music");
+          debugPrint(defaultMusicDir.path);
+          var defaultMusicDirPath = defaultMusicDir.path;
+          final savePathTemp = '$defaultMusicDirPath\\$title.temp.mp3';
+          final savePath = '$defaultMusicDirPath\\$title.mp3';
           var file = File(savePathTemp);
           var fileStream = file.openWrite();
           await audioFile.pipe(fileStream);
@@ -429,11 +431,13 @@ class MyAppState extends ChangeNotifier {
           }
           if (await fileExisting.exists()) {
             await fileExisting.delete();
-            progressText = ' Existing file found in:\n $savePath\n Replacing...';
+            progressText =
+            ' Existing file found in:\n $savePath\n Replacing...';
             notifyListeners();
             replacement = true;
           }
-          Tag? tag = await _displayTextInputDialog(context, titleMeta, author, "", uploadYear, thumbnailData);
+          Tag? tag = await _displayTextInputDialog(
+              context, titleMeta, author, "", uploadYear, thumbnailData);
           await executeFFmpeg(savePathTemp, savePath);
           if (isDone == true && isCorrect == true) {
             if (tag != null) {
@@ -459,7 +463,7 @@ class MyAppState extends ChangeNotifier {
             isDone = false;
             await file.delete();
           }
-        } catch (e) {
+        } else {
           var musicDir = await Directory('${appDocDir.path}\\Music').exists();
           if (musicDir == false) {
             var newDirectory = Directory('${appDocDir.path}\\Music');
@@ -479,11 +483,13 @@ class MyAppState extends ChangeNotifier {
             }
             if (await fileExisting.exists()) {
               await fileExisting.delete();
-              progressText = ' Existing file found in:\n $savePath\n Replacing...';
+              progressText =
+              ' Existing file found in:\n $savePath\n Replacing...';
               notifyListeners();
               replacement = true;
             }
-            Tag? tag = await _displayTextInputDialog(context, titleMeta, author, "", uploadYear, thumbnailData);
+            Tag? tag = await _displayTextInputDialog(
+                context, titleMeta, author, "", uploadYear, thumbnailData);
             await executeFFmpeg(savePathTemp, savePath);
             if (isDone == true && isCorrect == true) {
               if (tag != null) {
@@ -525,11 +531,13 @@ class MyAppState extends ChangeNotifier {
             }
             if (await fileExisting.exists()) {
               await fileExisting.delete();
-              progressText = ' Existing file found in:\n $savePath\n Replacing...';
+              progressText =
+              ' Existing file found in:\n $savePath\n Replacing...';
               notifyListeners();
               replacement = true;
             }
-            Tag? tag = await _displayTextInputDialog(context, titleMeta, author, "", uploadYear, thumbnailData);
+            Tag? tag = await _displayTextInputDialog(
+                context, titleMeta, author, "", uploadYear, thumbnailData);
             await executeFFmpeg(savePathTemp, savePath);
             if (isDone == true && isCorrect == true) {
               if (tag != null) {
@@ -581,13 +589,17 @@ class MyAppState extends ChangeNotifier {
           }
           if (await fileExisting.exists()) {
             await fileExisting.delete();
-            progressText = ' Existing file found in:\n /Music/$title.mp3\n Replacing...';
+            progressText =
+            ' Existing file found in:\n /Music/$title.mp3\n Replacing...';
             notifyListeners();
             replacement = true;
           }
-          FFmpegKit.execute('-i "$savePathTemp" -q:a 0 -map a -c:a libmp3lame "$savePath"').then((session) async {
+          FFmpegKit.execute(
+              '-i "$savePathTemp" -q:a 0 -map a -c:a libmp3lame "$savePath"')
+              .then((session) async {
             final returnCode = await session.getReturnCode();
-            Tag? tag = await _displayTextInputDialog(context, titleMeta, author, "", uploadYear, thumbnailData);
+            Tag? tag = await _displayTextInputDialog(
+                context, titleMeta, author, "", uploadYear, thumbnailData);
             if (ReturnCode.isSuccess(returnCode) && isCorrect == true) {
               if (tag != null) {
                 AudioTags.write(savePath, tag);
@@ -637,13 +649,17 @@ class MyAppState extends ChangeNotifier {
           }
           if (await fileExisting.exists()) {
             await fileExisting.delete();
-            progressText = ' Existing file found in:\n /Music/$title.mp3\n Replacing...';
+            progressText =
+            ' Existing file found in:\n /Music/$title.mp3\n Replacing...';
             notifyListeners();
             replacement = true;
           }
-          FFmpegKit.execute('-i "$savePathTemp" -q:a 0 -map a -c:a libmp3lame "$savePath"').then((session) async {
+          FFmpegKit.execute(
+              '-i "$savePathTemp" -q:a 0 -map a -c:a libmp3lame "$savePath"')
+              .then((session) async {
             final returnCode = await session.getReturnCode();
-            Tag? tag = await _displayTextInputDialog(context, titleMeta, author, "", uploadYear, thumbnailData);
+            Tag? tag = await _displayTextInputDialog(
+                context, titleMeta, author, "", uploadYear, thumbnailData);
             if (ReturnCode.isSuccess(returnCode) && isCorrect == true) {
               if (tag != null) {
                 AudioTags.write(savePath, tag);
@@ -679,6 +695,7 @@ class MyAppState extends ChangeNotifier {
       }
       ytExplode.close();
     } catch (e)  {
+      debugPrint(e.toString());
       progressText = ' Something went wrong.\n Please, check the url.';
       notifyListeners();
     }
